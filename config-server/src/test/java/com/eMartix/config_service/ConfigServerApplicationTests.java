@@ -1,4 +1,4 @@
-package com.eMartix.config_server;
+package com.eMartix.config_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
