@@ -1,0 +1,22 @@
+server:
+  port: 5000
+spring:
+  application:
+    name: lab05
+  datasource:
+    url: jdbc:mysql://localhost:3306/auth_service
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      format_sql: true
+    generate-ddl: true
+    show-sql: false
+
+logging:
+  level:
+    org:
+      springframework.security: DEBUG
