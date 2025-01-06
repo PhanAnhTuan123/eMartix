@@ -10,6 +10,7 @@
   <modules>
     <module>commons</module>
     <module>config-server</module>
+    <module>service-registry</module>
   </modules>
 
   <properties>
