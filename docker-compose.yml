@@ -38,6 +38,8 @@ services:
       - "6380:6379"
     volumes:
       - redis:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - eMartix-network
 
@@ -47,6 +49,8 @@ volumes:
   rabbitmq:
     driver: local
   redis:
+    driver: local
+  redis-data:
     driver: local
 
 networks:

@@ -1,0 +1,4 @@
+requirepass eMartix
+user default on nopass sanitize-payload ~* +@all
+user eMartix on sanitize-payload >eMartix ~* +@all
+
