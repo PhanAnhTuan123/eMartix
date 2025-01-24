@@ -1,6 +1,7 @@
 package com.eMartix.cart_service.security;
 
 import com.eMartix.commons.utils.CustomHeaders;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,18 +20,24 @@ import java.util.Optional;
 public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<String> id = Optional.ofNullable(request.getParameter(CustomHeaders.X_AUTH_USER_ID));
-        Optional<String> authorities = Optional.ofNullable(request.getParameter(CustomHeaders.X_AUTH_USER_AUTHORITIES));
-        if(id.isPresent() && authorities.isPresent()) {
+    protected void doFilterInternal(HttpServletRequest request, @Nonnull HttpServletResponse response,
+                                    @Nonnull FilterChain filterChain) throws ServletException, IOException {
+        Optional<String> id = Optional.ofNullable(request.getHeader(CustomHeaders.X_AUTH_USER_ID));
+        Optional<String> authorities = Optional.ofNullable(request.getHeader(CustomHeaders.X_AUTH_USER_AUTHORITIES));
+        if (id.isPresent() && authorities.isPresent()) {
             UserDetails userDetails = new UserDetailsImpl(
                     Long.parseLong(id.get()),
                     id.get(),
                     "PASSWORD",
-                    Arrays.stream(authorities.get().substring(1, authorities.get().length() - 1)
+                    Arrays.stream(authorities.get()
+                            .substring(1, authorities.get().length() - 1)
                             .split(",")).map(SimpleGrantedAuthority::new).toList()
             );
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }

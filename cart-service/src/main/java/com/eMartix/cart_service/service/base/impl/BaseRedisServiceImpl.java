@@ -17,9 +17,9 @@ public class BaseRedisServiceImpl implements BaseRedisService {
     private RedisTemplate<String, Object> redisTemplate;
     private HashOperations<String, String, Object> hashOperations;
 
-    public BaseRedisServiceImpl(RedisTemplate<String, Object> redisTemplate, HashOperations<String, String, Object> hashOperations) {
+    public BaseRedisServiceImpl(RedisTemplate<String, Object> redisTemplate){
         this.redisTemplate = redisTemplate;
-        this.hashOperations = hashOperations;
+        this.hashOperations = redisTemplate.opsForHash();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class BaseRedisServiceImpl implements BaseRedisService {
     }
 
     @Override
-    public Long hashIncrBy(String key, String field, long delta) {
+    public Long hashIncrBy(String key, String field, long delta){
         return this.hashOperations.increment(key, field, delta);
     }
 
@@ -49,25 +49,28 @@ public class BaseRedisServiceImpl implements BaseRedisService {
 
     @Override
     public Object get(String key) {
+
         return redisTemplate.opsForValue().get(key);
     }
 
     @Override
-    public Map<String, Object> getField(String key) {
+    public Map<String, Object> getField(String key){
         return hashOperations.entries(key);
     }
 
     @Override
-    public Object hashGet(String key, String field) {
+    public Object hashGet(String key, String field){
         return hashOperations.get(key, field);
     }
 
     @Override
     public List<Object> hashGetByFieldPrefix(String key, String fieldPrefix) {
         List<Object> objects = new ArrayList<>();
+
         Map<String, Object> hashEntries = hashOperations.entries(key);
-        for (Map.Entry<String, Object> entry : hashEntries.entrySet()) {
-            if(entry.getKey().startsWith(fieldPrefix)) {
+
+        for(Map.Entry<String, Object> entry : hashEntries.entrySet()){
+            if(entry.getKey().startsWith(fieldPrefix)){
                 objects.add(entry.getValue());
             }
         }
@@ -91,7 +94,7 @@ public class BaseRedisServiceImpl implements BaseRedisService {
 
     @Override
     public void delete(String key, List<String> fields) {
-        for (String field : fields) {
+        for(String field : fields){
             hashOperations.delete(key, field);
         }
     }
