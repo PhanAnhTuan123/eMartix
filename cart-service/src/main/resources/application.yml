@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: CART-SERVICE
+  config:
+    import: optional:configserver:http://localhost:8888
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+    redis:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      CART-SERVICE:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+
+  retry:
+    instances:
+      CART-SERVICE:
+        maxAttempts: 5
+        waitDuration: 2s
