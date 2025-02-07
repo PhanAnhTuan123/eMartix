@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@AttributeOverride(name = "GenerratedID", column = @Column(name = "id"))
-//@IdGeneratorType(NanoIDGenerator.class)
+@IdGeneratorType(NanoIDGenerator.class)
+@AttributeOverride(name = "GeneratedID", column = @Column(name = "id"))
 public @interface GeneratedID {
 }
