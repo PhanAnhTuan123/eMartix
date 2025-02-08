@@ -1,13 +1,7 @@
 package com.eMartix.auth_service.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -16,19 +10,16 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Token extends BaseEntity {
+@Table(name = "tbl_token")
+@Builder
+public class Token extends BaseEntity<String> {
 
+    @Column(name = "username", unique = true)
+    private String username;
+
+    @Column(name = "access_token")
     private String accessToken;
 
+    @Column(name = "refresh_token")
     private String refreshToken;
-
-    // th/gian het han
-    private LocalDateTime expiryDate;
-
-    // trang thai token(co bi thu hoi hay khong)
-    private boolean revoked;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 }

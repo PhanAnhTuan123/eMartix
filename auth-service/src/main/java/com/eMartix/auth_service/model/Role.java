@@ -1,13 +1,9 @@
 package com.eMartix.auth_service.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,19 +11,17 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role extends BaseEntity{
+@Builder
+@Table(name = "tbl_role")
+public class Role extends BaseEntity<String>{
 
-    @Column(name = "role_name")
-    private String roleName;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "role_desc")
-    private String roleDescription;
+    @Column(name = "description")
+    private String description;
 
-    // Mối quan hệ với RolePermission (One-to-Many)
     @OneToMany(mappedBy = "role")
-    private Set<RolePermission> rolePermissions;
+    private Set<RoleHasPermission> roles = new HashSet<>();
 
-    // Mối quan hệ với UserRole (One-to-Many)
-    @OneToMany(mappedBy = "role")
-    private Set<UserRole> userRoles;
 }

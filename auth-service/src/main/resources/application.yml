@@ -2,7 +2,7 @@ server:
   port: 5000
 spring:
   application:
-    name: lab05
+    name: auth-service
   datasource:
     url: jdbc:mysql://localhost:3306/auth_service
     username: root
@@ -15,6 +15,15 @@ spring:
       format_sql: true
     generate-ddl: true
     show-sql: false
+
+jwt:
+  expiryHour: 1
+  expiryDay: 14
+  accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
+  refreshKey: 9k1jJAWAKQCnCEz1pwcPNegbHoLugf9hgEnn6sz5pFc=
+
+api:
+  prefix: /api/v1
 
 logging:
   level:

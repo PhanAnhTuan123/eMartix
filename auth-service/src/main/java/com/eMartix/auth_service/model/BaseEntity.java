@@ -1,5 +1,6 @@
 package com.eMartix.auth_service.model;
 
+import com.eMartix.commons.id.GeneratedID;
 import com.eMartix.commons.id.NanoIDGenerator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,29 +10,28 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity <T extends Serializable> implements Serializable {
+
     @Id
-    private String id;
+    @GeneratedID
+    private T id;
 
     @CreationTimestamp
-//    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @UpdateTimestamp
-//    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    public BaseEntity(NanoIDGenerator nanoIDGenerator) {
-        this.id = nanoIDGenerator.generate();
-    }
+    private LocalDate updatedAt;
 
 }

@@ -3,11 +3,13 @@ package com.eMartix.auth_service.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,14 +17,15 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Permission extends BaseEntity{
+@Table(name = "tbl_permission")
+public class Permission extends BaseEntity<String>{
 
-    @Column(name = "permission_name")
-    private String permissionName;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "permission_desc")
-    private String permissionDescription;
+    @Column(name = "description")
+    private String description;
 
     @OneToMany(mappedBy = "permission")
-    private Set<RolePermission> rolePermissions;
+    private Set<RoleHasPermission> permissions = new HashSet<>();
 }
