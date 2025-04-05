@@ -8,10 +8,12 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>auth-service</module>
     <module>commons</module>
     <module>config-server</module>
-    <module>service-registry</module>
     <module>gateway-service</module>
+    <module>service-registry</module>
+    <module>user-service</module>
     <module>cart-service</module>
   </modules>
 

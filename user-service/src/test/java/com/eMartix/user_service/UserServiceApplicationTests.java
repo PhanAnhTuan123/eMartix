@@ -1,10 +1,10 @@
-package com.eMartix.config_server;
+package com.eMartix.user_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ConfigServerApplicationTests {
+class UserServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
