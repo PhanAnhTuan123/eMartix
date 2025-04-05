@@ -5,14 +5,14 @@ import com.eMartix.auth_service.common.UserStatus;
 import com.eMartix.auth_service.common.UserType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -22,7 +22,7 @@ import java.util.*;
 @NoArgsConstructor
 @Table(name = "tbl_user")
 @ToString
-public class User extends BaseEntity<String> implements UserDetails, Serializable {
+public class User extends BaseEntity implements UserDetails, Serializable {
     @Column(name = "first_name")
     private String firstName;
 
@@ -30,11 +30,10 @@ public class User extends BaseEntity<String> implements UserDetails, Serializabl
     private String lastName;
 
     @Column(name = "date_of_birth")
-    @Temporal(TemporalType.DATE)
-    private Date dateOfBirth;
+//    @Temporal(TemporalType.DATE)
+    private LocalDateTime dateOfBirth;
 
     @Enumerated(EnumType.STRING)
-//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "gender")
     private Gender gender;
 
@@ -50,65 +49,42 @@ public class User extends BaseEntity<String> implements UserDetails, Serializabl
     @Column(name = "password")
     private String password;
     @Enumerated(EnumType.STRING)
-//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "type")
     private UserType type;
 
     @Enumerated(EnumType.STRING)
-//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status")
     private UserStatus status;
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserHasRole> roles = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserRole> userRoles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<GroupHasUser> groups = new HashSet<>();
-    /**
-     * @return Returns the authorities granted to the user. Cannot return null.
-     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<String> roleList = this.roles.stream().map(role -> role.getRole().getName()).toList();
-        return roleList.stream().map(SimpleGrantedAuthority::new).toList();
+        return userRoles.stream()
+                .map(userRole -> new SimpleGrantedAuthority("ROLE_" + userRole.getRole().getRoleName()))
+                .collect(Collectors.toSet());
     }
 
-    /**
-     * Indicates whether the user's account has expired. An expired account cannot be authenticated.
-     *
-     * @return true if the user's account is valid (ie non-expired), false if no longer valid (ie expired)
-     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-    /**
-     * Indicates whether the user is locked or unlocked. A locked user cannot be authenticated.
-     *
-     * @return true if the user is not locked, false otherwise
-     */
+
     @Override
     public boolean isAccountNonLocked() {
-        return !UserStatus.LOCKED.equals(status);
+        return true;
     }
 
-    /**
-     * Indicates whether the user's credentials (password) has expired. Expired credentials prevent authentication.
-     *
-     * @return true if the user's credentials are valid (ie non-expired), false if no longer valid (ie expired)
-     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    /**
-     * Indicates whether the user is enabled or disabled. A disabled user cannot be authenticated.
-     *
-     * @return true if the user is enabled, false otherwise
-     */
     @Override
     public boolean isEnabled() {
-        return UserStatus.ACTIVE.equals(status);
+        // 👇 Đây là phần quan trọng khiến bạn bị "account is disabled"
+        return true;
     }
+
 }

@@ -12,9 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "tbl_token")
 @Builder
-public class Token extends BaseEntity<String> {
+//public class Token extends BaseEntity<String> {
+public class Token {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Hoặc GenerationType.AUTO
+    private Long id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     private String username;
 
     @Column(name = "access_token")

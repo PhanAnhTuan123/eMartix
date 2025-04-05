@@ -4,9 +4,7 @@ package com.eMartix.auth_service.service.impl;
 import com.eMartix.auth_service.common.TokenType;
 import com.eMartix.auth_service.exception.InvalidDataException;
 import com.eMartix.auth_service.service.JwtService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +45,7 @@ public class JwtServiceImpl implements JwtService {
     public String generateAccessToken(String userId, String username, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
+        claims.put("username", username);
         claims.put("role", authorities);
         return generateToken(claims, username);
     }
@@ -55,6 +54,7 @@ public class JwtServiceImpl implements JwtService {
     public String generateRefreshToken(String userId, String username, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
+        claims.put("username", username);
         claims.put("role", authorities);
 
         return generateRefreshToken(claims, username);
@@ -112,6 +112,9 @@ public class JwtServiceImpl implements JwtService {
      * @return all claims
      */
     private Claims extractAllClaims(String token, TokenType type) {
+        if(!isTokenExpired(token, type)) {
+            throw new InvalidDataException("Token expired");
+        }
         return Jwts.parser()
                 .setSigningKey(getKey(type)).build() // lấy ra secret key để decode token
                 .parseClaimsJws(token) // parse token
@@ -119,31 +122,53 @@ public class JwtServiceImpl implements JwtService {
     }
 
     /**
-     * Kiểm tra token có hợp lệ không
+     * Kiểm tra token có hết hạn hay không
      * @param token
      * @param type
-     * @return true nếu token hợp lệ
+     * @return true nếu token đã hết hạn, false nếu token còn hiệu lực
      */
     private boolean isTokenExpired(String token, TokenType type) {
         return extractExpiration(token, type).before(new Date());
     }
 
+    /**
+     * Lấy ra thời gian hết hạn của token
+     * @param token
+     * @param type
+     * @return thời gian hết hạn của token
+     */
     private Date extractExpiration(String token, TokenType type) {
         return extractClaim(token, type, Claims::getExpiration);
     }
 
     /**
-     * Kiểm tra token có hợp lệ không
+     * Kiểm tra token có hợp lệ hay không
      * @param token
      * @param tokenType
      * @param user
-     * @return
+     * @return true nếu token hợp lệ, false nếu token không hợp lệ
      */
     @Override
     public boolean isValid(String token, TokenType tokenType, UserDetails user) {
         final String username = extractUsername(token, tokenType);
         return (username.equals(user.getUsername()) && !isTokenExpired(token, tokenType));
     }
+
+    @Override
+    public boolean validateToken(String token, TokenType tokenType) {
+        try {
+                Jwts.parser()
+                        .setSigningKey(getKey(tokenType)).build() // lấy ra secret key để decode token
+                        .parseClaimsJws(token) // parse token
+                        .getBody();
+                return true;
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+            return false;
+        } catch (ExpiredJwtException ex) {
+            return false;
+        }
+    }
+
 
     /**
      * JWT được cấu thafnh từ 3 phần la header, payload và signature

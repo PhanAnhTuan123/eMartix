@@ -1,9 +1,7 @@
 package com.eMartix.auth_service.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,15 +15,16 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "tbl_permission")
-public class Permission extends BaseEntity<String>{
+@Table(name = "tbl_permissions")
+public class Permission extends BaseEntity{
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "name", unique = true)
+    private String permissionName;
 
     @Column(name = "description")
-    private String description;
+    private String permissionDescription;
 
-    @OneToMany(mappedBy = "permission")
-    private Set<RoleHasPermission> permissions = new HashSet<>();
+    @JsonManagedReference
+    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<RolePermission> rolePermissions = new HashSet<>();
 }

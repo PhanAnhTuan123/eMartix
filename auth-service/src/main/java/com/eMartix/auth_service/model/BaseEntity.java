@@ -20,11 +20,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class BaseEntity <T extends Serializable> implements Serializable {
-
+public abstract class BaseEntity implements Serializable {
     @Id
-    @GeneratedID
-    private T id;
+//    @GeneratedID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @CreationTimestamp
     @Column(name = "created_at")
