@@ -13,6 +13,8 @@
     <module>service-registry</module>
     <module>gateway-service</module>
     <module>cart-service</module>
+    <module>noti-service</module>
+    <module>product-service</module>
   </modules>
 
   <properties>

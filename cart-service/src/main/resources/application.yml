@@ -1,9 +1,15 @@
 spring:
+  boot:
+    message: 'Continue with save on card service'
   application:
     name: CART-SERVICE
   config:
     import: optional:configserver:http://localhost:8888
-
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: eMartix
+    password: 12345
 management:
   health:
     circuitbreakers:
@@ -36,3 +42,8 @@ resilience4j:
       CART-SERVICE:
         maxAttempts: 5
         waitDuration: 2s
+redis:
+  host: localhost
+  port: 6380
+server:
+  port: 8081
