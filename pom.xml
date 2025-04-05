@@ -14,6 +14,7 @@
     <module>gateway-service</module>
     <module>service-registry</module>
     <module>user-service</module>
+    <module>cart-service</module>
   </modules>
 
   <properties>

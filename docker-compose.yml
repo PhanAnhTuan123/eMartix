@@ -1,0 +1,59 @@
+version: '3.8'
+
+name: eMartix-infra
+
+services:
+  eMartix-infra-postgres:
+    container_name: eMartix-infra-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: eMartix
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - eMartix-network
+
+  eMartix-infra-rabbitmq:
+    image: rabbitmq:3.12.7-management-alpine
+    container_name: eMartix-infra-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: eMartix
+      RABBITMQ_DEFAULT_PASS: 12345
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    networks:
+      - eMartix-network
+
+  eMartix-infra-redis:
+    image: redis:7.2.5
+    container_name: eMartix-infra-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - eMartix-network
+
+volumes:
+  postgres:
+    driver: local
+  rabbitmq:
+    driver: local
+  redis:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  eMartix-network:
+#    external: true
+    driver: bridge
