@@ -54,6 +54,20 @@ public class JwtTokenProvider {
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
+
+    public String generateRefreshToken(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtConfig.getExpiration());
+
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
     public UsernamePasswordAuthenticationToken getAuthentication(String token) {
         Claims claims = extractClaims(token);
 
@@ -98,10 +112,5 @@ public class JwtTokenProvider {
         byte[] keyBytes = jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-//    private Key getSignInKey() {
-//        byte[] bytes = Decoders.BASE64.decode(secretKey);
-//        return Keys.hmacShaKeyFor(bytes);
-//    }
 
 }

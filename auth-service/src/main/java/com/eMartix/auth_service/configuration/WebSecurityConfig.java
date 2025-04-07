@@ -35,7 +35,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(unauthorizedHandler)) // Xử lý lỗi Unauthorized
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/v1/auth/login/**", "/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/login/**", "/api/v1/auth/register", "/api/v1/auth/refresh").permitAll()
                         .anyRequest().authenticated()  // Các API khác yêu cầu auth
                 )
                 .sessionManagement(manager -> manager

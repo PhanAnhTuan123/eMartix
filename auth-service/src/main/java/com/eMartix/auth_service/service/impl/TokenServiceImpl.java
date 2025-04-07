@@ -1,59 +1,47 @@
 package com.eMartix.auth_service.service.impl;
 
 
-import com.eMartix.auth_service.model.Token;
-import com.eMartix.auth_service.repository.TokenRepository;
 import com.eMartix.auth_service.service.TokenService;
-import com.eMartix.commons.advice.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TokenServiceImpl implements TokenService {
 
-    private final TokenRepository tokenRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    /**
-     * Get token by username
-     * @param username
-     * @return token
-     */
     @Override
-    public Token getByUsername(String username) {
-        return tokenRepository.findByUsername(username)
-                .orElseThrow(()-> new ResourceNotFoundException( "token", "username", username));
+    public void storeToken(String username, String accessToken, String refreshToken) {
+        // Lưu access token với key "accessToken:{username}"
+        redisTemplate.opsForValue().set("accessToken:" + username, accessToken);
+        // Lưu refresh token với key "refreshToken:{username}"
+        redisTemplate.opsForValue().set("refreshToken:" + username, refreshToken);
     }
 
-    /**
-     * Save token to database
-     * @param token
-     */
     @Override
-    public void saveToken(Token token) {
-        Optional<Token> existsToken = tokenRepository.findByUsername(token.getUsername());
-        if(existsToken.isEmpty()){
-            tokenRepository.save(token);
-        }else{
-            Token t = existsToken.get();
-            t.setAccessToken(token.getAccessToken());
-            t.setRefreshToken(token.getRefreshToken());
-            tokenRepository.save(t);
-        }
-
+    public String getAccessToken(String username) {
+        return redisTemplate.opsForValue().get("accessToken:" + username);
     }
 
-    /**
-     * Delete token by username
-     * @param username
-     */
+    @Override
+    public String getRefreshToken(String username) {
+        return redisTemplate.opsForValue().get("refreshToken:" + username);
+    }
+
     @Override
     public void deleteToken(String username) {
-        Token token = getByUsername(username);
-        tokenRepository.delete(token);
+        redisTemplate.delete("accessToken:" + username);
+        redisTemplate.delete("refreshToken:" + username);
+    }
+
+    // Lưu token với thời gian hết hạn (ví dụ: 1 giờ)
+    public void storeTokenWithExpiry(String username, String accessToken, String refreshToken) {
+        redisTemplate.opsForValue().set("accessToken:" + username, accessToken, 1, TimeUnit.HOURS);  // TTL 1 giờ
+        redisTemplate.opsForValue().set("refreshToken:" + username, refreshToken, 7, TimeUnit.DAYS);  // TTL 7 ngày
     }
 }
