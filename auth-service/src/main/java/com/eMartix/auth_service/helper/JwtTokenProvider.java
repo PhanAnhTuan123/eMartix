@@ -31,11 +31,6 @@ public class JwtTokenProvider {
     private final JwtConfig jwtConfig;
     private final UserDetailsServiceImpl userDetailsService;
 
-    @Value("${jwt.accessKey}")
-    private String jwtSecret;
-
-    @Value("${jwt.expiryHour}")
-    private int jwtExpirationInMs;
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
