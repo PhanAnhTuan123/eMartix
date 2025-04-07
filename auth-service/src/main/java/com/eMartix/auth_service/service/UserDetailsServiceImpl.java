@@ -6,6 +6,7 @@ import com.eMartix.auth_service.repository.RolePermissionRepository;
 import com.eMartix.auth_service.repository.UserRepository;
 import com.eMartix.auth_service.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,9 +25,14 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
     private final RolePermissionRepository rolePermissionRepository;
 
+//    UserDetailsServiceImpl(UserRepository userRepository, RolePermissionRepository rolePermissionRepository) {
+//        this.userRepository = userRepository;
+//        this.rolePermissionRepository = rolePermissionRepository;
+//    }
+
+    @Primary
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {

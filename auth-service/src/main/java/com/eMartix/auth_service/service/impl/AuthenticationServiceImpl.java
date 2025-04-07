@@ -1,6 +1,5 @@
 package com.eMartix.auth_service.service.impl;
 
-import com.eMartix.auth_service.common.TokenType;
 import com.eMartix.auth_service.common.UserStatus;
 import com.eMartix.auth_service.dto.request.LoginRequestDto;
 import com.eMartix.auth_service.dto.request.RegisterRequestDto;
@@ -9,24 +8,31 @@ import com.eMartix.auth_service.dto.response.UserResponseDto;
 import com.eMartix.auth_service.exception.InvalidDataException;
 import com.eMartix.auth_service.helper.JwtTokenProvider;
 import com.eMartix.auth_service.model.Role;
-import com.eMartix.auth_service.model.Token;
 import com.eMartix.auth_service.model.User;
 import com.eMartix.auth_service.model.UserRole;
 import com.eMartix.auth_service.repository.RoleRepository;
 import com.eMartix.auth_service.repository.UserRepository;
 import com.eMartix.auth_service.repository.UserRoleRepository;
 import com.eMartix.auth_service.service.AuthenticationService;
+import com.eMartix.auth_service.service.TokenService;
+import com.eMartix.auth_service.service.UserDetailsServiceImpl;
 import com.eMartix.auth_service.service.UserService;
-import com.eMartix.commons.advice.ResourceNotFoundException;
+import io.jsonwebtoken.JwtException;
 import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,11 +51,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final UserService userService;
-//    private final JwtTokenProvider tokenProvider;
-//    private final AuthenticationManager authenticationManager;
-    //login
+    private final TokenService tokenService;
+    private final UserDetailsService userDetailsService;
+
+
     @Override
-    public LoginResponse authenticateUser(LoginRequestDto request) {
+    public LoginResponse authenticateUser(LoginRequestDto request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsernameOrEmail(),
@@ -58,36 +65,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
-
-        UserResponseDto userDto = userService.getUserDetails(request.getUsernameOrEmail());
-
+        String refreshToken = tokenProvider.generateRefreshToken(authentication);
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);  // Chỉ có thể truy cập từ server, bảo vệ khỏi XSS
+        refreshTokenCookie.setSecure(true);    // Chỉ gửi qua HTTPS
+        refreshTokenCookie.setPath("/");       // Gửi trong các yêu cầu tới toàn bộ ứng dụng
+        response.addCookie(refreshTokenCookie);
+        tokenService.storeToken(authentication.getName(), jwt, refreshToken);
         return new LoginResponse(jwt);
     }
 
+
+    @Override
+    public LoginResponse createRefreshToken(String token) {
+        // phan giai claims -> lay sub
+        String username = tokenProvider.getUsernameFromToken(token);
+        // Kiểm tra Refresh Token trong Redis
+        String storedToken = tokenService.getRefreshToken(username);
+        if (storedToken != null && storedToken.equals(token)) {
+            UserDetails exitsUser = userDetailsService.loadUserByUsername(username);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(exitsUser, null, exitsUser.getAuthorities());
+            // Nếu tồn tại, tạo mới Refresh Token và Access Token
+            String newAccessToken = tokenProvider.generateToken(authentication);
+            String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
+            // Lưu Refresh Token mới vào Redis
+            tokenService.storeToken(username, newAccessToken, newRefreshToken);
+            return new LoginResponse(newAccessToken);
+        }
+        throw new JwtException("Refresh token is invalid");
+    }
 
     /**
      * Refresh token
      * @param request
      * @return token response
      */
-//    @Override
-//    public LoginResponse createRefreshToken(HttpServletRequest request) {
-//        log.info("---------- refreshToken ----------");
-//        String token = getToken(request);
-//        String username = jwtService.extractUsername(token, TokenType.REFRESH_TOKEN);
-//        User user = userRepository.findByUsername(username).orElseThrow(
-//                () -> new ResourceNotFoundException("User", "username", username)
-//        );
-//        if(!jwtService.isValid(token, TokenType.REFRESH_TOKEN, user)){
-//            throw new InvalidDataException("Not allow access with this token");
-//        }
-//        String newAccessToken = jwtService.generateAccessToken(user.getId(), user.getUsername(), user.getAuthorities());
-//        tokenService.saveToken(Token.builder().username(user.getUsername()).accessToken(newAccessToken).refreshToken(token).build());
-//        return LoginResponse.builder()
-//                .accessToken(newAccessToken)
-//                .refreshToken(token)
-//                .build();
-//    }
+
+
 
     private String getToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
@@ -161,6 +175,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return userService.getUserDetails(savedUser.getUsername());
     }
-
 
 }

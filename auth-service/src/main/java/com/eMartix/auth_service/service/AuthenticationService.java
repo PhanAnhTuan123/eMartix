@@ -5,12 +5,13 @@ import com.eMartix.auth_service.dto.request.RegisterRequestDto;
 import com.eMartix.auth_service.dto.response.LoginResponse;
 import com.eMartix.auth_service.dto.response.UserResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthenticationService {
 
-    LoginResponse authenticateUser(LoginRequestDto request);
+    LoginResponse authenticateUser(LoginRequestDto request, HttpServletResponse response);
 
-//    LoginResponse createRefreshToken(HttpServletRequest request);
+    LoginResponse createRefreshToken(String username);
 
 //    String logout(HttpServletRequest request);
 

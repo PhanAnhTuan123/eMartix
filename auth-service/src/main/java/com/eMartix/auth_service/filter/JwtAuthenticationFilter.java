@@ -5,6 +5,7 @@ import com.eMartix.auth_service.helper.JwtConfig;
 import com.eMartix.auth_service.helper.JwtTokenProvider;
 import com.eMartix.auth_service.service.JwtService;
 import com.eMartix.auth_service.service.UserDetailsServiceImpl;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+            throws ServletException, IOException, JwtException {
         try {
             if (isByPass(request)) {
                 filterChain.doFilter(request, response);
