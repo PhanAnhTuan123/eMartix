@@ -3,8 +3,6 @@ package com.eMartix.auth_service.filter;
 
 import com.eMartix.auth_service.helper.JwtConfig;
 import com.eMartix.auth_service.helper.JwtTokenProvider;
-import com.eMartix.auth_service.service.JwtService;
-import com.eMartix.auth_service.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
