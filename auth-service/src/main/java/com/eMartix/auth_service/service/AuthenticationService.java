@@ -13,7 +13,7 @@ public interface AuthenticationService {
 
     LoginResponse createRefreshToken(String username);
 
-//    String logout(HttpServletRequest request);
+    String logout(HttpServletRequest request, HttpServletResponse response);
 
     UserResponseDto register(RegisterRequestDto request);
 }
