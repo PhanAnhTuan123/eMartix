@@ -57,10 +57,12 @@ public class AuthenticationController {
         return new ResponseEntity<>(authenticationService.createRefreshToken(refreshToken), HttpStatus.OK);
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<String> logout(HttpServletRequest request) {
-//        log.info("POST /logout");
-//        return new ResponseEntity<>(authenticationService.logout(request), HttpStatus.OK);
-//    }
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        log.info("POST /logout");
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(new ApiResponse(true, authenticationService.logout(request, response)));
+    }
 
 }

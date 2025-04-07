@@ -176,4 +176,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return userService.getUserDetails(savedUser.getUsername());
     }
 
+    @Override
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            // Xóa thông tin xác thực khỏi SecurityContext
+            SecurityContextHolder.getContext().setAuthentication(null);
+            // Xóa token khỏi Redis
+            String username = authentication.getName();
+            tokenService.deleteToken(username);
+            log.info("User {} logged out successfully", username);
+        }
+        // Xóa JWT cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                // Kiểm tra xem có cookie nào tên là "refreshToken"
+                if ("refreshToken".equals(cookie.getName())) {
+                    // Trả về giá trị của refreshToken
+                    cookie = new Cookie("refreshToken", null);
+                    cookie.setHttpOnly(true);
+                    cookie.setSecure(true); // Chỉ set secure nếu bạn sử dụng https
+                    cookie.setPath("/"); // Đảm bảo cookie được xóa ở toàn bộ ứng dụng
+                    cookie.setMaxAge(0); // Đặt lại giá trị age thành 0 để xóa cookie
+                    response.addCookie(cookie);
+                }
+            }
+        }
+        return "Logout success";
+    }
 }
