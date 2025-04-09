@@ -15,7 +15,16 @@ spring:
       format_sql: true
     generate-ddl: true
     show-sql: false
-
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: c4f4a58defb84f
+    password: fa43c9c4f132ce
+    protocol: smtp
+    properties:
+        mail.smtp.auth: true
+        mail.smtp.starttls.enable: true
+    test-connection: true
   data:
     redis:
       host: localhost
