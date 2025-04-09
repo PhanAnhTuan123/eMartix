@@ -2,12 +2,14 @@ package com.eMartix.authservice.service.impl;
 
 import com.eMartix.authservice.common.UserStatus;
 import com.eMartix.authservice.dto.request.ChangePasswordRequestDto;
+import com.eMartix.authservice.dto.request.UpdateProfileRequestDto;
 import com.eMartix.authservice.dto.response.UserResponseDto;
 import com.eMartix.authservice.model.User;
 import com.eMartix.authservice.repository.RolePermissionRepository;
 import com.eMartix.authservice.repository.UserRepository;
 import com.eMartix.authservice.repository.UserRoleRepository;
 import com.eMartix.authservice.service.UserService;
+import com.eMartix.commons.advice.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -99,4 +101,32 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    @Override
+    public void updateProfile(Long userId, UpdateProfileRequestDto updateProfileRequestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        if(updateProfileRequestDto.getFirstName() != null) {
+            user.setFirstName(updateProfileRequestDto.getFirstName());
+        }
+
+        if(updateProfileRequestDto.getLastName() != null) {
+            user.setLastName(updateProfileRequestDto.getLastName());
+        }
+
+        if(updateProfileRequestDto.getDateOfBirth() != null) {
+            user.setDateOfBirth(updateProfileRequestDto.getDateOfBirth());
+        }
+
+        if(updateProfileRequestDto.getGender() != null) {
+            user.setGender(updateProfileRequestDto.getGender());
+        }
+
+        if(updateProfileRequestDto.getPhone() != null) {
+            user.setPhone(updateProfileRequestDto.getPhone());
+        }
+
+        userRepository.save(user);
+    }
 }

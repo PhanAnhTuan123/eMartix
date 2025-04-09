@@ -3,6 +3,7 @@ package com.eMartix.authservice.controller;
 
 import com.eMartix.authservice.common.UserStatus;
 import com.eMartix.authservice.dto.request.ChangePasswordRequestDto;
+import com.eMartix.authservice.dto.request.UpdateProfileRequestDto;
 import com.eMartix.authservice.dto.response.UserResponseDto;
 import com.eMartix.authservice.model.Permission;
 import com.eMartix.authservice.model.Role;
@@ -123,5 +124,19 @@ public class UserController {
                         .message("Password changed successfully")
                         .data(null)
                 .build());
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<ApiResponse> updateProfile(@RequestBody UpdateProfileRequestDto updateProfileRequestDto,
+                                                     Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Long userId = user.getId();
+        userService.updateProfile(userId, updateProfileRequestDto);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .message("Profile updated successfully")
+                .data(null)
+                .build());
+
     }
 }
