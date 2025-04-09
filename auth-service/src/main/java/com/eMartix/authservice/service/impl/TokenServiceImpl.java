@@ -14,13 +14,11 @@ import java.util.concurrent.TimeUnit;
 public class TokenServiceImpl implements TokenService {
 
     private final RedisTemplate<String, String> redisTemplate;
-
+    private static final String OTP_PREFIX = "otp:";
     @Override
-    public void storeToken(String username, String accessToken, String refreshToken) {
-        // Lưu access token với key "accessToken:{username}"
-        redisTemplate.opsForValue().set("accessToken:" + username, accessToken);
-        // Lưu refresh token với key "refreshToken:{username}"
-        redisTemplate.opsForValue().set("refreshToken:" + username, refreshToken);
+    public void storeTokenWithExpiry(String username, String accessToken, String refreshToken) {
+        redisTemplate.opsForValue().set("accessToken:" + username, accessToken, 1, TimeUnit.HOURS);  // TTL 1 giờ
+        redisTemplate.opsForValue().set("refreshToken:" + username, refreshToken, 7, TimeUnit.DAYS);  // TTL 7 ngày
     }
 
     @Override
@@ -40,8 +38,21 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // Lưu token với thời gian hết hạn (ví dụ: 1 giờ)
-    public void storeTokenWithExpiry(String username, String accessToken, String refreshToken) {
-        redisTemplate.opsForValue().set("accessToken:" + username, accessToken, 1, TimeUnit.HOURS);  // TTL 1 giờ
-        redisTemplate.opsForValue().set("refreshToken:" + username, refreshToken, 7, TimeUnit.DAYS);  // TTL 7 ngày
+
+
+    @Override
+    public void saveOtp(String email, String otp, long ttlMinutes) {
+        String key = OTP_PREFIX + email;
+        redisTemplate.opsForValue().set(key, otp, ttlMinutes, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public String getOtp(String email) {
+        return (String) redisTemplate.opsForValue().get(OTP_PREFIX + email);
+    }
+
+    @Override
+    public void deleteOtp(String email) {
+        redisTemplate.delete(OTP_PREFIX + email);
     }
 }

@@ -46,9 +46,6 @@ public class User extends BaseEntity implements UserDetails, Serializable {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "otp")
-    private String otp;
-
     @Column(name = "password")
     private String password;
     @Enumerated(EnumType.STRING)
@@ -59,6 +56,7 @@ public class User extends BaseEntity implements UserDetails, Serializable {
     @Column(name = "status")
     private UserStatus status;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserRole> userRoles = new HashSet<>();
 
@@ -88,6 +86,16 @@ public class User extends BaseEntity implements UserDetails, Serializable {
     public boolean isEnabled() {
         // 👇 Đây là phần quan trọng khiến bạn bị "account is disabled"
         return this.status == UserStatus.ACTIVE;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
 }

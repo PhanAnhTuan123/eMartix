@@ -2,9 +2,11 @@ package com.eMartix.authservice.controller;
 
 
 import com.eMartix.authservice.common.UserStatus;
+import com.eMartix.authservice.dto.request.ChangePasswordRequestDto;
 import com.eMartix.authservice.dto.response.UserResponseDto;
 import com.eMartix.authservice.model.Permission;
 import com.eMartix.authservice.model.Role;
+import com.eMartix.authservice.model.User;
 import com.eMartix.authservice.service.RoleService;
 import com.eMartix.authservice.service.UserService;
 import com.eMartix.commons.dtos.ApiResponse;
@@ -106,5 +108,20 @@ public class UserController {
             @PathVariable Long permissionId) {
         roleService.removePermissionFromRole(roleId, permissionId);
         return ResponseEntity.ok(new ApiResponse(true, "Permission removed from role successfully"));
+    }
+
+    @PutMapping("/users/change-password")
+    public ResponseEntity<ApiResponse> updateUserRoles(
+            @RequestBody ChangePasswordRequestDto changePasswordRequestDto,
+            Authentication authentication
+    ) {
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
+        userService.changePassword(username, changePasswordRequestDto);
+        return ResponseEntity.ok(ApiResponse.builder()
+                        .success(true)
+                        .message("Password changed successfully")
+                        .data(null)
+                .build());
     }
 }
