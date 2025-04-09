@@ -31,6 +31,12 @@ spring:
       port: 6379
       password: root
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: password
+
 jwt:
   expiryHour: 1
   expiryDay: 14

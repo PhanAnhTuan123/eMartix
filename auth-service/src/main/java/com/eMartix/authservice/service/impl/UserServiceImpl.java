@@ -1,6 +1,7 @@
 package com.eMartix.authservice.service.impl;
 
 import com.eMartix.authservice.common.UserStatus;
+import com.eMartix.authservice.dto.request.ChangePasswordRequestDto;
 import com.eMartix.authservice.dto.response.UserResponseDto;
 import com.eMartix.authservice.model.User;
 import com.eMartix.authservice.repository.RolePermissionRepository;
@@ -8,9 +9,13 @@ import com.eMartix.authservice.repository.UserRepository;
 import com.eMartix.authservice.repository.UserRoleRepository;
 import com.eMartix.authservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final RolePermissionRepository rolePermissionRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserDetails(String usernameOrEmail) {
@@ -74,6 +80,23 @@ public class UserServiceImpl implements UserService {
         user.setStatus(status);
         User savedUser = userRepository.save(user);
         return getUserDetails(savedUser.getUsername());
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(String username, ChangePasswordRequestDto changePasswordRequestDto) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(changePasswordRequestDto.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+
+        if (changePasswordRequestDto.getOldPassword().equals(changePasswordRequestDto.getNewPassword())) {
+            throw new IllegalArgumentException("New password must be different");
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordRequestDto.getNewPassword()));
+        userRepository.save(user);
     }
 
 }

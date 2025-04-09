@@ -19,4 +19,6 @@ public interface AuthenticationService {
     UserResponseDto register(RegisterRequestDto request);
 
     boolean verifyEmail(VerifyOtpRequestDto requestDto);
+
+    void sentRequireForgotPassword(String email);
 }

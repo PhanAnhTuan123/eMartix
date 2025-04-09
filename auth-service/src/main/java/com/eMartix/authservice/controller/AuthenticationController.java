@@ -69,4 +69,12 @@ public class AuthenticationController {
         boolean rs =authenticationService.verifyEmail(requestDto);
         return ResponseEntity.ok(new ApiResponse(rs, "Verification email sent successfully"));
     }
+
+    // forgot password
+//    @PostMapping("send-reset-password-otp")
+//    public ResponseEntity<ApiResponse> sendResetPasswordEmail(@RequestBody() String email) {
+//
+//
+//        return ResponseEntity.ok(new ApiResponse(, "Reset password email sent successfully"));
+//    }
 }
