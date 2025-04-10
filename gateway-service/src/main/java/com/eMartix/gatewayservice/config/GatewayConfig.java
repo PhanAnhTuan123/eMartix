@@ -1,4 +1,4 @@
-package com.eMartix.gateway_service.config;
+package com.eMartix.gatewayservice.config;
 
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;

@@ -1,4 +1,4 @@
-package com.eMartix.gateway_service;
+package com.eMartix.gatewayservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
