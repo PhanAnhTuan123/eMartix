@@ -1,4 +1,4 @@
-package com.eMartix.config_service;
+package com.eMartix.configservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
