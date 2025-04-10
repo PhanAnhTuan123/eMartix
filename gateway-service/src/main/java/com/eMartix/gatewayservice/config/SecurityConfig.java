@@ -1,4 +1,4 @@
-package com.eMartix.gateway_service.config;
+package com.eMartix.gatewayservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

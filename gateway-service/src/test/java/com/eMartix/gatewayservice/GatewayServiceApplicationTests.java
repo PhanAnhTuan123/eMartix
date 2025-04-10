@@ -1,10 +1,10 @@
-package com.eMartix.service_registry;
+package com.eMartix.gatewayservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ServiceRegistryApplicationTests {
+class GatewayServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
