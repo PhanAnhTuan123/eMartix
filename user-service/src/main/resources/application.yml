@@ -1,0 +1,17 @@
+server:
+  port: 5050
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/user_service
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      format_sql: true
+    generate-ddl: true
+    show-sql: false

@@ -1,0 +1,54 @@
+server:
+  port: 5000
+spring:
+  application:
+    name: AUTH-SERVICE
+  datasource:
+    url: jdbc:mysql://localhost:3306/auth_service
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      format_sql: true
+    generate-ddl: true
+    show-sql: false
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: c4f4a58defb84f
+    password: fa43c9c4f132ce
+    protocol: smtp
+    properties:
+        mail.smtp.auth: true
+        mail.smtp.starttls.enable: true
+    test-connection: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: root
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: password
+
+jwt:
+  expiryHour: 1
+  expiryDay: 14
+  secret: 4f9c1f5e70ee039c9f6fab00b56531e8c0e97b207f96c2bcc7177a7cba528a138a02985e1c10f73c7220e133351a19f8e6f242fd155ebc08c5c9ac7693d5007d
+  expiration: 3600000
+  prefix: Bearer
+  header: Authorization
+
+api:
+  prefix: /api/v1
+
+logging:
+  level:
+    org:
+      springframework.security: DEBUG

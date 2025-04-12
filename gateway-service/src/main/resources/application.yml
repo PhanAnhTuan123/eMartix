@@ -49,7 +49,6 @@ spring:
         jwt:
           issuer-uri: http://localhost:8181
 
-
 server:
   port: 8080
   forward-headers-strategy: framework
