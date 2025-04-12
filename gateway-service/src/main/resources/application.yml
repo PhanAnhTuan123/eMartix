@@ -1,6 +1,17 @@
 spring:
   application:
     name: GATEWAY-SERVICE
+  main:
+    web-application-type: reactive
+  codec:
+    max-in-memory-size: 100MB
+  webflux:
+    multipart:
+      max-in-memory-size: 100MB
+      max-disk-usage-per-part: 100MB
+      max-parts: 1
+#  profiles:
+#    active: dev
   config:
     import: optional:configserver:http://localhost:8888
   cloud:
@@ -40,6 +51,7 @@ spring:
 
 server:
   port: 8080
+  forward-headers-strategy: framework
 
 eureka:
   instance:
@@ -69,4 +81,7 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.security: trace
     web: trace
-
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
