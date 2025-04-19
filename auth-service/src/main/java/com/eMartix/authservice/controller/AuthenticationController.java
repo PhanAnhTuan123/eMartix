@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("${api.prefix}/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationController {
@@ -39,7 +38,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<LoginResponse> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<LoginResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Refreshing token");
         // Lấy tất cả cookies từ request
         Cookie[] cookies = request.getCookies();
         String refreshToken = null;
@@ -53,7 +53,7 @@ public class AuthenticationController {
             }
         }
 
-        return new ResponseEntity<>(authenticationService.createRefreshToken(refreshToken), HttpStatus.OK);
+        return new ResponseEntity<>(authenticationService.createRefreshToken(refreshToken, response), HttpStatus.OK);
     }
 
     @PostMapping("/logout")

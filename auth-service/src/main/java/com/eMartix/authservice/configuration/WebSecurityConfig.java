@@ -1,5 +1,6 @@
 package com.eMartix.authservice.configuration;
 
+import com.eMartix.authservice.filter.GatewayAuthFilter;
 import com.eMartix.authservice.filter.JwtAuthenticationFilter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +24,19 @@ public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final GatewayAuthFilter gatewayAuthFilter;
 
-
-    @Value("${api.prefix}")
-    private String apiPrefix;
 
     @Bean
     public SecurityFilterChain configure(@NonNull HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+                // Thêm API Key filter
+                .addFilterBefore(gatewayAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(unauthorizedHandler)) // Xử lý lỗi Unauthorized
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/v1/auth/login/**", "/api/v1/auth/register", "/api/v1/auth/refresh", "/api/v1/auth/send-verification-otp")
+                        .requestMatchers("/login", "/register", "/refresh", "/send-verification-otp")
                         .permitAll()
                         .anyRequest().authenticated()  // Các API khác yêu cầu auth
                 )

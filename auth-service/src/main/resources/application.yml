@@ -4,7 +4,7 @@ spring:
   application:
     name: AUTH-SERVICE
   datasource:
-    url: jdbc:mysql://localhost:3306/auth_service
+    url: jdbc:mysql://localhost:3306/auth_service?createDatabaseIfNotExist=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -29,7 +29,6 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: root
 
   rabbitmq:
     host: localhost
@@ -38,15 +37,19 @@ spring:
     password: password
 
 jwt:
-  expiryHour: 1
-  expiryDay: 14
   secret: 4f9c1f5e70ee039c9f6fab00b56531e8c0e97b207f96c2bcc7177a7cba528a138a02985e1c10f73c7220e133351a19f8e6f242fd155ebc08c5c9ac7693d5007d
   expiration: 3600000
   prefix: Bearer
   header: Authorization
 
-api:
-  prefix: /api/v1
+gateway:
+  x-api-key: api-key
+
+eureka:
+  instance:
+    client:
+      serverUrl:
+        defaultZone: http://localhost:8761/eureka/
 
 logging:
   level:

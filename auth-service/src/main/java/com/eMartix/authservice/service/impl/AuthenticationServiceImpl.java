@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -80,7 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public LoginResponse createRefreshToken(String token) {
+    public LoginResponse createRefreshToken(String token, HttpServletResponse response) {
         // phan giai claims -> lay sub
         String username = tokenProvider.getUsernameFromToken(token);
         // Kiểm tra Refresh Token trong Redis
@@ -91,7 +92,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             // Nếu tồn tại, tạo mới Refresh Token và Access Token
             String newAccessToken = tokenProvider.generateToken(authentication);
             String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
+            Cookie refreshTokenCookie = new Cookie("refreshToken", newRefreshToken);
+            refreshTokenCookie.setHttpOnly(true);  // Chỉ có thể truy cập từ server, bảo vệ khỏi XSS
+            refreshTokenCookie.setSecure(true);    // Chỉ gửi qua HTTPS
+            refreshTokenCookie.setPath("/");       // Gửi trong các yêu cầu tới toàn bộ ứng dụng
+            response.addCookie(refreshTokenCookie);
             // Lưu Refresh Token mới vào Redis
+
             tokenService.storeTokenWithExpiry(username, newAccessToken, newRefreshToken);
             return new LoginResponse(newAccessToken);
         }
@@ -169,7 +176,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 otp
         );
         mailProducer.sendOtpMail(mailRequest);
-        tokenService.saveOtp(user.getEmail(), otp, 10); // Lưu OTP sống 10 phút
+        tokenService.saveOtp(user.getEmail(), otp, TimeUnit.MINUTES.toSeconds(10)); // Lưu OTP sống 10 phút
 
         return userService.getUserDetails(savedUser.getUsername());
     }
