@@ -10,9 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RedisBucketConfig {
 
-    @Value("${spring.data.redis.password:#{null}}")  // Mặc định null nếu không có
-    private String redisPassword;
-
     @Value("${spring.data.redis.host:localhost}")  // Mặc định null nếu không có
     private String redisHost;
 
@@ -27,7 +24,6 @@ public class RedisBucketConfig {
         RedisURI redisURI = RedisURI.builder()
                 .withHost(redisHost)
                 .withPort(redisPort)
-                .withPassword(redisPassword != null ? redisPassword.toCharArray() : null)
                 .build();
         return RedisClient.create(redisURI);
     }
