@@ -43,6 +43,20 @@ services:
     networks:
       - eMartix-network
 
+  eMartix-infra-mysql:
+    image: mysql:latest
+    container_name: eMartix-infra-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: eMartix
+      MYSQL_PASSWORD: 12345
+    volumes:
+      - mysql:/var/lib/mysql/data
+    networks:
+      - eMartix-network
+
 volumes:
   postgres:
     driver: local
