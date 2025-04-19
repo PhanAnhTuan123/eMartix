@@ -1,4 +1,4 @@
-package com.eMartix.authservice.configuration;
+package com.eMartix.gatewayservice.config;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RedisConfig {
+public class RedisBucketConfig {
+
     @Value("${spring.data.redis.password:#{null}}")  // Mặc định null nếu không có
     private String redisPassword;
 
@@ -21,7 +22,7 @@ public class RedisConfig {
     /**
      * Bean RedisClient tạo kết nối Redis.
      */
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public RedisClient redisClient() {
         RedisURI redisURI = RedisURI.builder()
                 .withHost(redisHost)
@@ -31,7 +32,7 @@ public class RedisConfig {
         return RedisClient.create(redisURI);
     }
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public StatefulRedisConnection<String, String> redisConnection(RedisClient redisClient) {
         return redisClient.connect();
     }

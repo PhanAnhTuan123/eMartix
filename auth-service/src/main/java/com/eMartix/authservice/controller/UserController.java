@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -35,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/users/me")
+    @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {

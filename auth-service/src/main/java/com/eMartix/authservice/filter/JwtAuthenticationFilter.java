@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,10 +61,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean isByPass(@NonNull HttpServletRequest request){
 
-        String apiPrefix = "/api/v1";
 
         final List<Pair<String, String>> byPassTokens = Arrays.asList(
-                Pair.of(String.format("%s/auth/login", apiPrefix), "POST"));
+                Pair.of("/login", "POST"),  Pair.of("/register", "POST"));
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
         for (Pair<String, String> token : byPassTokens) {

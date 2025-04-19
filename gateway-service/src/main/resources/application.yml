@@ -5,6 +5,10 @@ spring:
     import: optional:configserver:http://localhost:8888
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true # tự động định tuyến dựa vào serviceId
+          lower-case-service-id: true # chuyển đổi serviceId thành chữ thường
       routes:
         - id: PRODUCT-SERVICE
           uri: lb://PRODUCT-SERVICE
@@ -21,22 +25,36 @@ spring:
         - id: AUTH-SERVICE
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/api/oauth2/**, /api/v1/auth/**, /api/v1/users/**, /api/v1/address/**
+            - Path=/api/v1/auth/**
           filters:
-            - RewritePath=/api/oauth2/(?<segment>.*), /oauth2/${segment}
+            - AddRequestHeader=X-API-KEY, ${gateway.x-api-key}
             - RewritePath=/api/v1/auth/signup, /signup
+            - RewritePath=/api/v1/auth/login, /login
             - RewritePath=/api/v1/auth/register, /register
-            - RewritePath=/api/v1/users, /users
-            - RewritePath=/api/v1/address, /address
+            - RewritePath=/api/v1/auth/refresh, /refresh
+            - RewritePath=/api/v1/auth/send-verification-otp, /send-verification-otp
+            - RewritePath=/api/v1/auth/users, /users
+            - RewritePath=/api/v1/auth/roles, /roles
+            - RewritePath=/api/v1/auth/permissions, /permissions
         - id: NOTI-SERVICE
           uri: lb://NOTI-SERVICE
           predicates:
             - Path=/api/v1/notifications/**
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8181
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: root
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://localhost:8181
+jwt:
+  secret: 4f9c1f5e70ee039c9f6fab00b56531e8c0e97b207f96c2bcc7177a7cba528a138a02985e1c10f73c7220e133351a19f8e6f242fd155ebc08c5c9ac7693d5007d
+gateway:
+  x-api-key: api-key
+
 
 server:
   port: 8080
