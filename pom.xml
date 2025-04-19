@@ -19,13 +19,10 @@
     <module>gateway-service</module>
     <module>config-server</module>
     <module>service-registry</module>
-<<<<<<< HEAD
     <module>gateway-service</module>
     <module>cart-service</module>
     <module>noti-service</module>
     <module>product-service</module>
-=======
->>>>>>> main
   </modules>
 
 
@@ -45,7 +42,6 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-<<<<<<< HEAD
         <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -85,14 +81,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
-=======
-        <version>3.4.1</version> <!-- hoặc version bạn đang dùng -->
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
->>>>>>> main
 </project>
