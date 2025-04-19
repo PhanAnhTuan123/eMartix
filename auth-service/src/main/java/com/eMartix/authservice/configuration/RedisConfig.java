@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.data.redis.host}")  // Mặc định null nếu không có
+    @Value("${spring.data.redis.host:localhost}")  // Mặc định null nếu không có
     private String redisHost;
 
     @Value("${spring.data.redis.port:6379}")  // Mặc định null nếu không có
