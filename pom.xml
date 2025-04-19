@@ -19,13 +19,10 @@
     <module>gateway-service</module>
     <module>config-server</module>
     <module>service-registry</module>
-<<<<<<< HEAD
     <module>gateway-service</module>
     <module>cart-service</module>
     <module>noti-service</module>
     <module>product-service</module>
-=======
->>>>>>> main
   </modules>
 
 
@@ -38,6 +35,7 @@
     <spring-cloud.version>2023.0.1</spring-cloud.version>
     <lombok.version>1.18.28</lombok.version>
     <postgresql.version>42.7.1</postgresql.version>
+    <swagger.version>2.4.0</swagger.version>
   </properties>
 
   <dependencyManagement>
@@ -45,7 +43,6 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-<<<<<<< HEAD
         <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -56,6 +53,11 @@
         <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>${swagger.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -86,13 +88,4 @@
     </pluginManagement>
   </build>
 
-=======
-        <version>3.4.1</version> <!-- hoặc version bạn đang dùng -->
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
->>>>>>> main
 </project>
