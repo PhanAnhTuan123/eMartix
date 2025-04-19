@@ -28,13 +28,13 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 6380
 
   rabbitmq:
     host: localhost
     port: 5672
-    username: admin
-    password: password
+    username: eMartix
+    password: 12345
 
 jwt:
   secret: 4f9c1f5e70ee039c9f6fab00b56531e8c0e97b207f96c2bcc7177a7cba528a138a02985e1c10f73c7220e133351a19f8e6f242fd155ebc08c5c9ac7693d5007d

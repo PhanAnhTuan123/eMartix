@@ -12,10 +12,7 @@
 
   <modules>
     <module>auth-service</module>
-    <module>cart-service</module>
-    <module>user-service</module>
     <module>commons</module>
-    <module>gateway-service</module>
     <module>config-server</module>
     <module>service-registry</module>
     <module>gateway-service</module>
@@ -30,7 +27,7 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring-boot.version>3.2.4</spring-boot.version>
+    <spring-boot.version>3.4.4</spring-boot.version>
     <spring-cloud.version>2023.0.1</spring-cloud.version>
     <lombok.version>1.18.28</lombok.version>
     <postgresql.version>42.7.1</postgresql.version>
