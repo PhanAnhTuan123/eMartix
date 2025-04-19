@@ -22,25 +22,25 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, @Nonnull HttpServletResponse response,
                                     @Nonnull FilterChain filterChain) throws ServletException, IOException {
-        Optional<String> id = Optional.ofNullable(request.getHeader(CustomHeaders.X_AUTH_USER_ID));
-        Optional<String> authorities = Optional.ofNullable(request.getHeader(CustomHeaders.X_AUTH_USER_AUTHORITIES));
-        if (id.isPresent() && authorities.isPresent()) {
-            UserDetails userDetails = new UserDetailsImpl(
-                    Long.parseLong(id.get()),
-                    id.get(),
-                    "PASSWORD",
-                    Arrays.stream(authorities.get()
-                            .substring(1, authorities.get().length() - 1)
-                            .split(",")).map(SimpleGrantedAuthority::new).toList()
-            );
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
-            );
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-        }
+//        Optional<String> id = Optional.ofNullable(request.getHeader(CustomHeaders.X_AUTH_USER_ID));
+//        Optional<String> authorities = Optional.ofNullable(request.getHeader(CustomHeaders.X_AUTH_USER_AUTHORITIES));
+//        if (id.isPresent() && authorities.isPresent()) {
+//            UserDetails userDetails = new UserDetailsImpl(
+//                    Long.parseLong(id.get()),
+//                    id.get(),
+//                    "PASSWORD",
+//                    Arrays.stream(authorities.get()
+//                            .substring(1, authorities.get().length() - 1)
+//                            .split(",")).map(SimpleGrantedAuthority::new).toList()
+//            );
+//            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+//                    userDetails,
+//                    null,
+//                    userDetails.getAuthorities()
+//            );
+//            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//            SecurityContextHolder.getContext().setAuthentication(authToken);
+//        }
         filterChain.doFilter(request, response);
     }
 }
